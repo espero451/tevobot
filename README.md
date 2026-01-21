@@ -5,18 +5,26 @@ Esperanto dictionary Telegram bot based on the [Reta Vortaro](https://github.com
 
 ## Features
 
-- Search Esperanto words with definitions.
+- Search for words in the dictionary.
+- Display usage examples in Esperanto.
+- Accept words in different forms (plural, accusative, past/future tense) and automatically normalize them to the base form (singular noun or infinitive verb).
+- Invert dictionary direction (From → To).
+- Multilingual support.
 
 
 ## Build the Database
 
 1. Download the latest revoxdxf_YYYY-MM-DD.zip from [revo-fonto](https://github.com/revuloj/revo-fonto/releases) and unpack it.
 2. In ./tools/xdxf_parser.py, configure the following variables:
+```
 INPUT_XDXF = "/path/to/revo.xdxf"   # path to your xdxf file
 OUTPUT_DB = "tevobot.db"            # desired output database name
+```
 3. Run the parser:
-```cd tools/
-python3 xdxf_parser.py```
+```
+cd tools/
+python3 xdxf_parser.py
+```
 The database will be generated in the ./data/ folder.
 
 Execute:
@@ -24,7 +32,7 @@ Execute:
 cd tools/
 python3 xdxf_parser.py
 ```
-The database will be created in ./data/ folder.
+The database will be created in `./data/` folder.
 
 
 ## Deployment
@@ -45,6 +53,14 @@ cd tevobot
 poetry install --no-root
 poetry run python3 bot/bot.py
 ```
+
+## Config
+
+1. Create `./bot/TOKEN.py` file and add variable with your bot token from BodFather:
+```python
+TOKEN = "YOUR_TOKEN_HERE"
+```
+2. `TOKEN.py` is already listed in `.gitignore`, so it will not be committed. *Make sure never to share it publicly.*
 
 
 ## Bot Commands
