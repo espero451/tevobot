@@ -1,0 +1,17 @@
+def esperanto(vorto):
+
+    suffixes = ('is', 'as', 'os')
+
+    if vorto.endswith(suffixes):
+        vorto = vorto[:-2] + "i"
+
+    if vorto.endswith('jn'):
+        vorto = vorto[:-2]
+
+    if vorto.endswith(('j')):
+        vorto = vorto[:-1]
+
+    if vorto.endswith('n') and vorto not in {'kun', 'sen', 'en'}:
+        vorto = vorto[:-1]
+
+    return vorto
