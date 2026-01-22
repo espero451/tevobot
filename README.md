@@ -5,8 +5,7 @@ Esperanto dictionary Telegram bot based on the [Reta Vortaro](https://github.com
 
 ## Features
 
-- Search for words in the dictionary.
-- Display usage examples in Esperanto.
+- Search for words in the dictionary and display definition and usage examples in Esperanto.
 - Accept words in different forms (plural, accusative, past/future tense) and automatically normalize them to the base form (singular noun or infinitive verb).
 - Invert dictionary direction (From → To).
 - Multilingual support.
@@ -14,28 +13,28 @@ Esperanto dictionary Telegram bot based on the [Reta Vortaro](https://github.com
 
 ## Build the Database
 
-1. Download the latest revoxdxf_YYYY-MM-DD.zip from [revo-fonto](https://github.com/revuloj/revo-fonto/releases) and unpack it.
-2. In ./tools/xdxf_parser.py, configure the following variables:
+1. Download the latest `revoxdxf_YYYY-MM-DD.zip` from [revo-fonto](https://github.com/revuloj/revo-fonto/releases) and unpack it.
+2. In `./tools/xdxf_parser.py`, configure the following variables:
 ```
-INPUT_XDXF = "/path/to/revo.xdxf"   # path to your xdxf file
-OUTPUT_DB = "tevobot.db"            # desired output database name
+INPUT_XDXF = "/path/to/revo.xdxf"   # path to unpacked .xdxf file
+OUTPUT_DB = "tevo.db"            # desired output database name
 ```
 3. Run the parser:
 ```
-cd tools/
-python3 xdxf_parser.py
-```
-The database will be generated in the ./data/ folder.
-
-Execute:
-```bash
-cd tools/
 python3 xdxf_parser.py
 ```
 The database will be created in `./data/` folder.
 
 
 ## Deployment
+
+poetry:
+```bash
+git clone https://github.com/espero451/tevobot
+cd tevobot
+poetry install --no-root
+poetry run python3 bot/bot.py
+```
 
 venv:
 ```bash
@@ -46,13 +45,7 @@ python3 -m venv ./venv
 pip install -r requirements.txt
 python3 -m tevobot
 ```
-poetry:
-```bash
-git clone https://github.com/espero451/tevobot
-cd tevobot
-poetry install --no-root
-poetry run python3 bot/bot.py
-```
+
 
 ## Config
 
@@ -60,7 +53,7 @@ poetry run python3 bot/bot.py
 ```python
 TOKEN = "YOUR_TOKEN_HERE"
 ```
-2. `TOKEN.py` is already listed in `.gitignore`, so it will not be committed. *Make sure never to share it publicly.*
+*`TOKEN.py` is already listed in `.gitignore`, so it will not be committed. Make sure never to share it publicly.*
 
 
 ## Bot Commands
@@ -70,3 +63,8 @@ TOKEN = "YOUR_TOKEN_HERE"
 /statuso    : Show current dictionary status (default: Esperanto → En)
 /inversigi  : Invert dictionary languages
 ```
+
+
+## TODO
+
+- Add cx, ux, sx, gx, hx auto input transformations.

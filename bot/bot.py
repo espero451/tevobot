@@ -69,7 +69,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["reverse"] = False
     status = build_status(context)
 
-    welcome_text = f"Saluton! Mi estas Telegrama Vortaro bot. Sendu vorton, kaj mi resendas la difino.\n\nReĝimo:\n{status}"
+    welcome_text = f"Saluton! Mi estas vortaro boto. Sendu vorton, kaj mi resendos la difino.\n\n<b>Reĝimo:</b> {status}"
 
     await update.message.reply_text(welcome_text, parse_mode="HTML")
 
@@ -146,7 +146,7 @@ async def translate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lang_code = context.user_data.get("lang_code", "en")
     reverse = context.user_data.get("reverse")
 
-    # user_id = update.message.from_user.id
+    user_id = update.message.from_user.id
     # log_input(user_id, word)
 
     if reverse:
@@ -154,13 +154,18 @@ async def translate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         translation = db.get_translation(word, lang_code)
 
-    if translation:
-        for chunk in split_message(translation):
-            await update.message.reply_text(chunk, parse_mode="HTML")
+    if not translation:
+        await update.message.reply_text("Kara amiko, pardonu, mi ne povas trovi ĉi tiun vorton...")
+        return
+
+    if reverse:
+        result = "\n\n".join(translation)
     else:
-        await update.message.reply_text(
-            "Kara amiko, pardonu, mi ne povas trovi ĉi tiun vorton..."
-    )
+        result = f"<b>{translation[0]}</b>:\n\n{translation[1]}\n\n<b>{lang_code}: {translation[2]}</b>"
+        # result = f"<b>{translation('word')}</b>:\n\n{translation('definition')}\n\n<b>{lang_code}: {translation('translation')}</b>"
+
+    for chunk in split_message(result):
+        await update.message.reply_text(chunk, parse_mode="HTML")
 
 
 # Message length limiter
@@ -170,9 +175,9 @@ def split_message(text: str, limit: int = 4000):
 
 
 # Log writer (debugger)
-# def log_input(user_id: int, text: str):
-    # timestamp = datetime.now().isoformat(timespec="seconds")
-    # print(timestamp, user_id, text)
+def log_input(user_id: int, text: str):
+    timestamp = datetime.now().isoformat(timespec="seconds")
+    print(timestamp, user_id, text)
     # with open(LOG_PATH, "a", encoding="utf-8") as f:
         # f.write(f"{timestamp}\t{user_id}\t{text}\n")
 

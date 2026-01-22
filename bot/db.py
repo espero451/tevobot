@@ -22,26 +22,32 @@ def get_translation(word, lang_code="en"):
     cur = conn.cursor()
 
     query = """
-        SELECT d.definition, t.lang, t.translation
+        SELECT d.definition, t.translation
         FROM words w
         JOIN definitions d ON d.word_id = w.id
-        LEFT JOIN translations t ON t.word_id = w.id
-        WHERE LOWER(w.word) = ? AND t.lang = ?
+        LEFT JOIN translations t ON t.word_id = w.id AND t.lang = ?
+        WHERE LOWER(w.word) = ?
     """
 
-    cur.execute(query, (word, lang_code))
+    cur.execute(query, (lang_code, word))
     rows = cur.fetchall()
     cur.close()
 
     if not rows:
         return None
 
-    lines = []
-    for definition, lang, translation in rows:
-        lines.append(translation)
-    translations = ", ".join(lines)
-#!!! return only values: word, definition, lang. translations
-    return f"<b>{word}</b>:\n\n{definition}\n\n<b>{lang}: {translations}</b>"
+    definition = rows[0][0]
+    lines = [t for _, t in rows if t is not None]
+    translations = ", ".join(lines) if lines else "🤷"
+
+    return [word, definition, translations]
+
+    # TODO:
+    # return {
+        # "word": word,
+        # "definition": definition,
+        # "translation": translation
+    # }
 
 
 def get_reverse_translation(word, lang_code="en"):
@@ -49,7 +55,7 @@ def get_reverse_translation(word, lang_code="en"):
     cur = conn.cursor()
 
     query = """
-        SELECT w.word, d.definition, t.lang, t.translation
+        SELECT w.word, d.definition
         FROM translations t
         JOIN words w ON w.id = t.word_id
         JOIN definitions d ON d.word_id = w.id
@@ -65,7 +71,7 @@ def get_reverse_translation(word, lang_code="en"):
         return None
 
     lines = []
-    for word, definition, lang, translation in rows:
+    for word, definition in rows:
         lines.append(f"<b>{word}</b>:\n\n{definition}")
-#!!! return only values: word, definition
-    return "\n\n".join(lines)
+
+    return lines
