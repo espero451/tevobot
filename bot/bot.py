@@ -18,7 +18,7 @@ from telegram.ext import (
 from datetime import datetime
 
 import db
-from config import TOKEN, SUPPORTED_LANGUAGES, PKL_PATH, LOG_PATH
+from config import TOKEN, SUPPORTED_LANGUAGES, PKL_PATH, LOG_PATH, LOG_ACTIVE
 from esperanto import esperanto
 
 
@@ -143,26 +143,31 @@ def build_status(context: ContextTypes.DEFAULT_TYPE):
 async def translate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     word = esperanto(update.message.text.strip().lower())
+
+    if len(word) > 30:
+        await update.message.reply_text("Kara amiko, pardonu, sed mi ne konas tiom longajn vortojn...")
+        return
+
     lang_code = context.user_data.get("lang_code", "en")
     reverse = context.user_data.get("reverse")
-
-    user_id = update.message.from_user.id
-    # log_input(user_id, word)
+    
+    if LOG_ACTIVE:
+        user_id = update.message.from_user.id
+        log_input(user_id, word)
 
     if reverse:
-        translation = db.get_reverse_translation(word, lang_code)
+        request = db.get_reverse_translation(word, lang_code)
     else:
-        translation = db.get_translation(word, lang_code)
+        request = db.get_translation(word, lang_code)
 
-    if not translation:
+    if not request:
         await update.message.reply_text("Kara amiko, pardonu, mi ne povas trovi ĉi tiun vorton...")
         return
 
     if reverse:
-        result = "\n\n".join(translation)
+        result = "\n\n".join(request)
     else:
-        result = f"<b>{translation[0]}</b>:\n\n{translation[1]}\n\n<b>{lang_code}: {translation[2]}</b>"
-        # result = f"<b>{translation('word')}</b>:\n\n{translation('definition')}\n\n<b>{lang_code}: {translation('translation')}</b>"
+        result = f"<b>{request['word']}</b>:\n\n{request['definition']}\n\n<b>{lang_code}: {request['translations']}</b>"
 
     for chunk in split_message(result):
         await update.message.reply_text(chunk, parse_mode="HTML")
@@ -175,11 +180,12 @@ def split_message(text: str, limit: int = 4000):
 
 
 # Log writer (debugger)
+# Turn it ON or OFF by LOG_ACTIVE var in config.py file
 def log_input(user_id: int, text: str):
     timestamp = datetime.now().isoformat(timespec="seconds")
     print(timestamp, user_id, text)
-    # with open(LOG_PATH, "a", encoding="utf-8") as f:
-        # f.write(f"{timestamp}\t{user_id}\t{text}\n")
+    with open(LOG_PATH, "a", encoding="utf-8") as f:
+        f.write(f"{timestamp}\t{user_id}\t{text}\n")
 
 
 if __name__ == "__main__":

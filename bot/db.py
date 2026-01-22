@@ -40,14 +40,13 @@ def get_translation(word, lang_code="en"):
     lines = [t for _, t in rows if t is not None]
     translations = ", ".join(lines) if lines else "🤷"
 
-    return [word, definition, translations]
+    # return [word, definition, translations]
 
-    # TODO:
-    # return {
-        # "word": word,
-        # "definition": definition,
-        # "translation": translation
-    # }
+    return {
+        "word": word,
+        "definition": definition,
+        "translations": translations
+    }
 
 
 def get_reverse_translation(word, lang_code="en"):
