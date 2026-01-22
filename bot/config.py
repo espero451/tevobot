@@ -5,6 +5,7 @@ from TOKEN import TOKEN
 DB_FILE = "tevo.db"
 PKL_FILE = "bot_data.pkl"
 LOG_FILE = "input.log"
+LOG_ACTIVE = True
 
 
 ### DO NOT CHANGE PARAMS BELLOW THIS LINE
