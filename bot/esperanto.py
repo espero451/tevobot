@@ -14,4 +14,6 @@ def esperanto(vorto):
     if vorto.endswith('n') and vorto not in {'kun', 'sen', 'en', 'nun'}:
         vorto = vorto[:-1]
 
+    vorto = vorto.replace("cx", "ĉ").replace("sx", "ŝ").replace("gx", "ĝ").replace("hx", "ĥ").replace("ux", "ŭ")
+
     return vorto
