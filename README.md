@@ -7,6 +7,7 @@ Esperanto dictionary Telegram bot based on the [Reta Vortaro](https://github.com
 
 - Search for words in the dictionary and display definition and usage examples in Esperanto.
 - Accept words in different forms (plural, accusative, past/future tense) and automatically normalize them to the base form (singular noun or infinitive verb).
+- Automatic input transformations for cx → ĉ, ux → ŭ, etc.
 - Invert dictionary direction (From → To).
 - Multilingual support.
 
@@ -55,6 +56,7 @@ TOKEN = "YOUR_TOKEN_HERE"
 ```
 *`TOKEN.py` is already listed in `.gitignore`, so it will not be committed. Make sure never to share it publicly.*
 
+2. Check ./bot/config.py file.
 
 ## Bot Commands
 ```
@@ -63,8 +65,3 @@ TOKEN = "YOUR_TOKEN_HERE"
 /statuso    : Show current dictionary status (default: Esperanto → En)
 /inversigi  : Invert dictionary languages
 ```
-
-
-## TODO
-
-- Add cx, ux, sx, gx, hx auto input transformations.
