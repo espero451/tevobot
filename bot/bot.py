@@ -16,13 +16,29 @@ from telegram.ext import (
     PicklePersistence
 )
 from datetime import datetime
+import time
+from collections import defaultdict, deque
 
 import db
-from config import TOKEN, SUPPORTED_LANGUAGES, PKL_PATH, LOG_PATH, LOG_ACTIVE
+from config import TOKEN, SUPPORTED_LANGUAGES, PKL_PATH, LOG_PATH, LOG_ACTIVE, WINDOW, LIMIT
 from esperanto import esperanto
 
 
 persistence = PicklePersistence(filepath=PKL_PATH)
+
+# flood protection
+user_requests = defaultdict(deque)
+
+def is_allowed(user_id):
+    now = time.time()
+    q = user_requests[user_id]
+    while q and q[0] < now - WINDOW:
+        q.popleft()
+    if len(q) >= LIMIT:
+        return False
+    q.append(now)
+    return True
+
 
 def main():
     app = ApplicationBuilder().token(TOKEN).persistence(persistence).build()
@@ -141,18 +157,26 @@ def build_status(context: ContextTypes.DEFAULT_TYPE):
 
 # Vocabulary, translation
 async def translate(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    
-    word = esperanto(update.message.text.strip().lower())
 
+    # protection: flood
+    user_id = update.message.from_user.id
+    if not is_allowed(user_id):
+        await update.message.reply_text("Kara amiko, vi tro ofte sendas mesaĝojn, bonvolu malrapidigi.")
+        return
+
+    word = update.message.text.strip()
+
+    # protection: input length
     if len(word) > 30:
         await update.message.reply_text("Kara amiko, pardonu, sed mi ne konas tiom longajn vortojn...")
         return
+
+    word = esperanto(word.lower())
 
     lang_code = context.user_data.get("lang_code", "en")
     reverse = context.user_data.get("reverse")
     
     if LOG_ACTIVE:
-        user_id = update.message.from_user.id
         log_input(user_id, word)
 
     if reverse:

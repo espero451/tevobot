@@ -6,7 +6,8 @@ DB_FILE = "tevo.db"
 PKL_FILE = "bot_data.pkl"
 LOG_FILE = "input.log"
 LOG_ACTIVE = True
-
+WINDOW = 1 # Time window in seconds for input rate limiting
+LIMIT = 1 # Maximum number of messages allowed per user within the WINDOW
 
 ### DO NOT CHANGE PARAMS BELLOW THIS LINE
 
