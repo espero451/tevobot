@@ -1,3 +1,5 @@
+![image](assets/header.png)
+
 # TeVo: Telegrama Vortaro
 
 Esperanto dictionary Telegram bot based on the [Reta Vortaro](https://github.com/revuloj) project database.
@@ -56,7 +58,8 @@ TOKEN = "YOUR_TOKEN_HERE"
 ```
 *`TOKEN.py` is already listed in `.gitignore`, so it will not be committed. Make sure never to share it publicly.*
 
-2. Check ./bot/config.py file.
+2. Check `./bot/config.py` file.
+
 
 ## Bot Commands
 ```
